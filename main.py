@@ -13,6 +13,7 @@ from src.dataset import get_data_loaders
 from src.train import Trainer
 from src.utils import ensure_dir
 
+
 def main():
     # Initialize configuration
     config = Config()

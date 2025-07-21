@@ -97,15 +97,13 @@ def save_checkpoint(model, optimizer, epoch, loss, filepath):
     torch.save(checkpoint, filepath)
     print(f"Checkpoint saved at epoch {epoch} to {filepath}")
 
-def load_checkpoint(filepath, model, optimizer=None):
-    checkpoint = torch.load(filepath)
-    model.load_state_dict(checkpoint['model_state_dict'])
-    
-    if optimizer:
-        optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
-    
-    epoch = checkpoint['epoch']
-    loss = checkpoint['loss']
-    
-    print(f"Checkpoint loaded: epoch {epoch}, loss {loss:.4f}")
-    return epoch, loss
+def load_checkpoint(self, filepath):
+    if os.path.exists(filepath) and os.path.getsize(filepath) > 0:
+        print(f"Loading checkpoint from {filepath}")
+        checkpoint = torch.load(filepath, map_location=self.device)
+        self.model.load_state_dict(checkpoint['model_state_dict'])
+        self.optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+        self.start_epoch = checkpoint['epoch'] + 1
+        print(f"Checkpoint loaded, resuming from epoch {self.start_epoch}")
+    else:
+        print(f"No valid checkpoint found at {filepath}, starting from scratch.")
